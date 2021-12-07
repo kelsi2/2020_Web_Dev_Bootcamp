@@ -7,16 +7,22 @@ app.get("/", (req, res) => {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=Vancouver&appid=ba3c636726be0fc2e52c10ee17734d84&units=metric`;
 
   https.get(url, (response) => {
-    console.log(response.statusCode);
-
     response.on('data', (data) => {
       const weatherData = JSON.parse(data);
       const temp = weatherData.main.temp;
       const weatherDescription = weatherData.weather[0].description;
+      const icon = weatherData.weather[0].icon;
+      const imageURL = `http://openweathermap.org/img/wn/${icon}@2x.png`;
+
+      res.write(`<p>The weather is currently ${weatherDescription}</p>`);
+      res.write(
+        `<h1>The temperature in Vancouver is ${temp} degrees Celsius.</h1>`
+      );
+      res.write(`<img src=${imageURL} />`);
+
+      res.send();
     });
   });
-
-  res.send("Server is up and running.");
 });
 
 app.listen(3000, () => {
