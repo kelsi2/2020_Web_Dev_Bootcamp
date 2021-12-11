@@ -3,41 +3,30 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }))
+
 app.set('view engine', 'ejs');
+
+let items = [];
 
 app.get('/', (req, res) => {
   const today = new Date();
-  const currentDay = today.getDay();
-  let day = '';
+  
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  };
 
-  switch (currentDay) {
-    case 0:
-      day = "Sunday";
-      break;
-    case 1:
-      day = "Monday";
-      break;
-    case 2:
-      day = "Tuesday";
-      break;
-    case 3:
-      day = "Wednesday";
-      break;
-    case 4:
-      day = "Thursday";
-      break;
-    case 5:
-      day = "Friday";
-      break;
-    case 6:
-      day = "Saturday";
-      break;
-    default:
-      console.log(`Error: current day is equal to ${currentDay}`);
-      break;
-  }
+  const day = today.toLocaleDateString('en-US', options);
 
-   res.render("list", { day });
+   res.render('list', { day, items });
+});
+
+app.post('/', (req, res) => {
+  items.push(req.body.newItem);
+
+  res.redirect('/');
 });
 
 app.listen(3000, () => {
