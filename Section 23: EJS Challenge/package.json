@@ -6,12 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Kelsi Proulx",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.1",
     "ejs": "^2.7.4",
-    "express": "^4.17.1",
-    "lodash": "^4.17.11"
+    "express": "^4.17.1"
   }
 }
