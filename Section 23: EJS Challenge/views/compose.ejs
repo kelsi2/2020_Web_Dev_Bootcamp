@@ -3,9 +3,17 @@
 <h1>Compose</h1>
 
 <form action="/compose" method="post">
-  <input type="text" name="postTitle">
+  <div class="form-group">
+    <label for="postTitle">Title</label>
+    <input class="form-control" type="text" name="postTitle">
+  </div>
   
-  <button type="submit" name="button">Publish</button>
+  <div class="form-group">
+    <label for="postBody">Post</label>
+    <textarea class="form-control" rows="5" type="text" name="postBody"></textarea>
+  </div>
+
+  <button class="btn btn-primary" type="submit" name="button">Publish</button>
 </form>
 
 <%- include('partials/footer') -%>
