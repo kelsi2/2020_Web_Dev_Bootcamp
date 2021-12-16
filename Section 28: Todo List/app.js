@@ -1,27 +1,26 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const app = express();
 
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-mongoose.connect('mongodb://localhost:27017/todolistDB', { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/todolistDB", {
+  useNewUrlParser: true,
+});
 
 const itemsSchema = {
-  name: String
+  name: String,
 };
 
-const Item = mongoose.model(
-  "Item",
-  itemsSchema
-);
+const Item = mongoose.model("Item", itemsSchema);
 
-const item1 = new Item ({
-  name: "Welcome to your todo list!"
+const item1 = new Item({
+  name: "Welcome to your todo list!",
 });
 
 const item2 = new Item({
@@ -34,8 +33,14 @@ const item3 = new Item({
 
 const defaultItems = [item1, item2, item3];
 
+const listSchema = {
+  name: String,
+  items: [itemsSchema],
+};
 
-app.get("/", function(req, res) {
+const List = mongoose.model("List", listSchema);
+
+app.get("/", (req, res) => {
   Item.find({}, (err, foundItems) => {
     if (!foundItems.length) {
       Item.insertMany(defaultItems, (err) => {
@@ -45,14 +50,14 @@ app.get("/", function(req, res) {
           console.log("Successfully saved default items to DB");
         }
       });
-      res.redirect('/');
-    } else {  
-      res.render("list", {listTitle: "Today", newListItems: foundItems});
+      res.redirect("/");
+    } else {
+      res.render("list", { listTitle: "Today", newListItems: foundItems });
     }
   });
 });
 
-app.post("/", function(req, res){
+app.post("/", (req, res) => {
   const itemName = req.body.newItem;
 
   const item = new Item({
@@ -60,28 +65,44 @@ app.post("/", function(req, res){
   });
 
   item.save();
-  res.redirect('/');
+  res.redirect("/");
 });
 
-app.post('/delete', (req, res) => {
+app.post("/delete", (req, res) => {
   const checkedItemId = req.body.checkbox;
 
   Item.findByIdAndRemove(checkedItemId, (err) => {
     if (!err) {
       console.log("Successfully deleted checked item.");
     }
-    res.redirect('/');
+    res.redirect("/");
   });
 });
 
-app.get("/work", function(req,res){
-  res.render("list", {listTitle: "Work List", newListItems: workItems});
+app.get("/:customListName", (req, res) => {
+  const customListName = req.params.customListName;
+
+  List.findOne({ name: customListName }, (err, foundList) => {
+    if (!err) {
+      if (!foundList) {
+        const list = new List({
+          name: customListName,
+          items: defaultItems,
+        });
+
+        list.save();
+        res.redirect(`/${customListName}`)
+      } else {
+        res.render('list', { listTitle: foundList.name, newListItems: foundList.items });
+      }
+    }
+  });
 });
 
-app.get("/about", function(req, res){
+app.get("/about", (req, res) => {
   res.render("about");
 });
 
-app.listen(3000, function() {
+app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
