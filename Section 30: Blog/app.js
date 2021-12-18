@@ -33,7 +33,7 @@ const postSchema = {
 
 const Post = mongoose.model("Post", postSchema);
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   Post.find({}, (err, posts) => {
     res.render("home", {
       startingContent: homeStartingContent,
@@ -43,19 +43,19 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/about", function (req, res) {
+app.get("/about", (req, res) => {
   res.render("about", { aboutContent: aboutContent });
 });
 
-app.get("/contact", function (req, res) {
+app.get("/contact", (req, res) => {
   res.render("contact", { contactContent: contactContent });
 });
 
-app.get("/compose", function (req, res) {
+app.get("/compose", (req, res) => {
   res.render("compose");
 });
 
-app.post("/compose", function (req, res) {
+app.post("/compose", (req, res) => {
   const post = new Post({
     title: req.body.postTitle,
     content: req.body.postBody,
@@ -68,21 +68,17 @@ app.post("/compose", function (req, res) {
   });
 });
 
-app.get("/posts/:postName", function (req, res) {
-  const requestedTitle = _.lowerCase(req.params.postName);
+app.get("/posts/:postId", (req, res) => {
+  const requestedPostId = req.params.postId;
 
-  posts.forEach(function (post) {
-    const storedTitle = _.lowerCase(post.title);
-
-    if (storedTitle === requestedTitle) {
-      res.render("post", {
-        title: post.title,
-        content: post.content,
-      });
-    }
+  Post.findOne({ _id: requestedPostId }, (err, post) => {
+    res.render("post", {
+      title: post.title,
+      content: post.content,
+    });
   });
 });
 
-app.listen(3000, function () {
+app.listen(3000, () => {
   console.log("Server started on port 3000");
 });
