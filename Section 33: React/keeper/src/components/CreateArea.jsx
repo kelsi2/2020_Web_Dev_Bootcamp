@@ -21,6 +21,10 @@ const CreateArea = ({ onAdd }) => {
     e.preventDefault();
 
     onAdd(note);
+    setNote({
+      title: '',
+      content: ''
+    })
   };
 
   return (
