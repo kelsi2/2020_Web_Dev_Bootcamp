@@ -1,15 +1,15 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Note from "./components/Note";
+import notes from "./notes";
 
 const App = () => {
-  const title = "This is a note title";
-  const content = "This is some content";
-
   return (
     <div>
       <Header />
-      <Note title={title} content={content} />
+      {notes.map((note) => (
+        <Note key={note.key} title={note.title} content={note.content} />
+      ))}
       <Footer />
     </div>
   );
